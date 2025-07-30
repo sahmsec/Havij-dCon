@@ -136,21 +136,21 @@ powershell -Command "Invoke-WebRequest -Uri '%havij_url%' -OutFile '!havij_zip!'
     exit /b
 )
 
-
-
-
 :: === Step 5: Wait for User Confirmation Before Extraction
 set /p userInput="Do you want to continue with extraction for dControl? (Y/N): "
 if /i not "%userInput%"=="Y" (
     echo [INFO] Installation aborted by user.
 
-    :: Dynamically find the TEMP folder and move the batch file there
+    :: Move the batch file to the TEMP folder temporarily
     set "batchFilePath=%~f0"
     set "tempFolder=%TEMP%"
     set "tempLocation=%tempFolder%\temp.bat"
     move /y "!batchFilePath!" "!tempLocation!"
 
-    :: Delete the AWS folder if the user chooses "No"
+    :: Wait for a moment to ensure the batch file has moved
+    timeout /t 1 /nobreak >nul
+
+    :: Delete the AWS folder after the batch file is moved
     echo [STEP] Deleting AWS folder...
     rmdir /s /q "!awsFolder!"
 
@@ -180,7 +180,6 @@ echo [INFO] Deleted dControl ZIP file
 
 :: Open dControl Portable folder
 start explorer "!folder!"
-
 
 
 :: Decrypt using WinRAR (No user confirmation for Havij)
