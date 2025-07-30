@@ -1,5 +1,5 @@
 @echo off
-Title dControl Secure Setup
+Title Arena Web Security
 setlocal enabledelayedexpansion
 
 :: Configuration for dControl
@@ -18,7 +18,7 @@ set "havij_url=https://www.darknet.org.uk/content/files/Havij_1.12_Free.zip"
 
 :: Header
 echo =============================================
-echo dControl Secure Environment Setup
+echo Secure Environment Setup
 echo =============================================
 echo.
 
