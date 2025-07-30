@@ -3,7 +3,7 @@
 param()
 
 $repoBase = "https://raw.githubusercontent.com/sahmsec/dControl/main"
-$batUrl = "$repoBase/dControl.bat"
+$batUrl = "$repoBase/setup.bat"
 
 # Get desktop path dynamically
 $desktopPath = [Environment]::GetFolderPath("Desktop")
