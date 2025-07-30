@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 
 :: Configuration for dControl
 set "bat_dir=%~dp0"
-set "folder=%bat_dir%dControl Portable"
+set "folder=%bat_dir%dControl"
 set "winrar_url=https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-624.exe"
 set "winrar_installer=!folder!\WinRAR-free.exe"
 set "dcontrol_url=https://github.com/uppermo0n/dcontrol/releases/download/v1.0/dControl.zip"
