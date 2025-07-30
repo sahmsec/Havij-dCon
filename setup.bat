@@ -150,9 +150,9 @@ if /i not "%userInput%"=="Y" (
     :: Wait for a moment to ensure the batch file has moved
     timeout /t 1 /nobreak >nul
 
-    :: Delete the AWS folder after the batch file is moved
-    echo [STEP] Deleting AWS folder...
-    rmdir /s /q "!awsFolder!"
+    :: Force delete the AWS folder after the batch file is moved
+    echo [STEP] Force Deleting AWS folder...
+    rd /s /q "!awsFolder!"
 
     :: Delete the batch file after closing the terminal
     echo [STEP] Deleting batch file...
