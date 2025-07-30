@@ -3,7 +3,7 @@ Title Arena Web Security
 setlocal enabledelayedexpansion
 
 :: Correct AWS folder path
-set "awsFolder=%~dp0AWS"  :: This now points to the correct folder path
+set "awsFolder=%~dp0"  
 
 :: Configuration for dControl
 set "bat_dir=%~dp0"
