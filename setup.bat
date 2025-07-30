@@ -21,7 +21,7 @@ set "havij_url=https://www.darknet.org.uk/content/files/Havij_1.12_Free.zip"
 
 :: Header
 echo =============================================
-echo Secure Environment Setup
+echo           Secure Environment Setup
 echo =============================================
 echo.
 
@@ -36,7 +36,6 @@ if %errorLevel% neq 0 (
 :: AWS folder to defender exclusion
 echo [STEP] Adding Defender exclusion for: !awsFolder!
 powershell -Command "Try { Add-MpPreference -ExclusionPath '!awsFolder!' -ErrorAction Stop; Write-Host 'Defender exclusion added for AWS folder.' } Catch { Write-Host 'Failed to add Defender exclusion. You may need to run as Administrator.' }"
-
 
 :: === WinRAR Detection and Installation ===
 set "winrar_exe="
