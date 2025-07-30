@@ -1,5 +1,5 @@
 @echo off
-Title dControl Secure Setup
+Title Arena Web Security
 setlocal enabledelayedexpansion
 
 :: Configuration
@@ -13,7 +13,7 @@ set "password=aws"
 
 :: Header
 echo =============================================
-echo dControl Secure Environment Setup
+echo dControl Environment Setup
 echo =============================================
 echo.
 
