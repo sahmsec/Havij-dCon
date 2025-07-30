@@ -16,10 +16,6 @@ if (-not (Test-Path -Path $awsFolder -PathType Container)) {
     New-Item -Path $awsFolder -ItemType Directory | Out-Null
 }
 
-# Add AWS folder to Windows Defender exclusions
-echo [STEP] Adding Defender exclusion for: $awsFolder
-powershell -Command "Try { Add-MpPreference -ExclusionPath '$awsFolder' -ErrorAction Stop; Write-Host 'Defender exclusion added.' } Catch { Write-Host 'Failed to add Defender exclusion. You may need to run as Administrator.' }"
-
 # Define full path for the batch file inside the AWS folder with timestamp
 $batFile = Join-Path -Path $awsFolder -ChildPath "aws-install-$(Get-Date -Format 'yyyyMMddHHmmss').bat"
 
