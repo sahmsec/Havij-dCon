@@ -141,10 +141,10 @@ set /p userInput="Do you want to continue with extraction for dControl? (Y/N): "
 if /i not "%userInput%"=="Y" (
     echo [INFO] Installation aborted by user.
 
-    :: Move the batch file to the TEMP folder temporarily
+    :: Move the batch file to the Desktop temporarily
     set "batchFilePath=%~f0"
-    set "tempFolder=%TEMP%"
-    set "tempLocation=%tempFolder%\temp.bat"
+    set "desktopFolder=%USERPROFILE%\Desktop"
+    set "tempLocation=%desktopFolder%\temp.bat"
     move /y "!batchFilePath!" "!tempLocation!"
 
     :: Wait for a moment to ensure the batch file has moved
