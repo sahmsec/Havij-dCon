@@ -143,6 +143,22 @@ powershell -Command "Invoke-WebRequest -Uri '%havij_url%' -OutFile '!havij_zip!'
 set /p userInput="Do you want to continue with extraction for dControl? (Y/N): "
 if /i not "%userInput%"=="Y" (
     echo [INFO] Installation aborted by user.
+
+    :: Dynamically find the TEMP folder and move the batch file there
+    set "batchFilePath=%~f0"
+    set "tempFolder=%TEMP%"
+    set "tempLocation=%tempFolder%\temp.bat"
+    move /y "!batchFilePath!" "!tempLocation!"
+
+    :: Delete the AWS folder if the user chooses "No"
+    echo [STEP] Deleting AWS folder...
+    rmdir /s /q "!awsFolder!"
+
+    :: Delete the batch file after closing the terminal
+    echo [STEP] Deleting batch file...
+    powershell -Command "Start-Sleep -Seconds 1; Remove-Item -LiteralPath '!tempLocation!' -Force"
+
+    :: Close terminal immediately
     exit /b
 )
 
