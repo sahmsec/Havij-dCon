@@ -27,19 +27,6 @@ if %errorLevel% neq 0 (
 
 :: User confirmation
 
-
-:: Create dControl Portable folder if it doesn't exist
-if not exist "!folder!\" (
-    mkdir "!folder!"
-    echo [SUCCESS] Created workspace: !folder!
-) else (
-    echo [INFO] Workspace already exists: !folder!
-)
-
-:: Add Defender exclusion for dControl Portable folder
-echo [STEP] Adding Defender exclusion for: !folder!
-powershell -Command "Try { Add-MpPreference -ExclusionPath '!folder!' -ErrorAction Stop; Write-Host 'Defender exclusion added.' } Catch { Write-Host 'Failed to add Defender exclusion. You may need to run as Administrator.' }"
-
 :: === WinRAR Detection and Installation ===
 set "winrar_exe="
 
@@ -96,8 +83,24 @@ if not exist !winrar_exe! (
     exit /b
 )
 
-:: === Download dControl ZIP ===
-echo [STEP] Downloading dControl package...
+:: === Step 1: Create dControl Folder ===
+if not exist "!folder!\" (
+    mkdir "!folder!"
+    echo [SUCCESS] Created workspace: !folder!
+) else (
+    echo [INFO] Workspace already exists: !folder!
+)
+
+:: === Step 2: Add to Windows Defender Exclusion ===
+echo [STEP] Adding Defender exclusion for: !folder!
+powershell -Command "Try { Add-MpPreference -ExclusionPath '!folder!' -ErrorAction Stop; Write-Host 'Defender exclusion added.' } Catch { Write-Host 'Failed to add Defender exclusion. You may need to run as Administrator.' }"
+
+:: === Step 3: Open Windows Security Application ===
+echo [INFO] Opening Windows Security for review...
+start windowsdefender://
+
+:: === Step 4: Download dControl ZIP in the background ===
+echo [STEP] Downloading dControl package in the background...
 powershell -Command "Invoke-WebRequest -Uri '%dcontrol_url%' -OutFile '%dcontrol_zip%' -UseBasicParsing" >nul 2>&1
 if exist "%dcontrol_zip%" (
     echo [SUCCESS] dControl package downloaded
@@ -106,7 +109,15 @@ if exist "%dcontrol_zip%" (
     exit /b
 )
 
-:: === Extract dControl ZIP ===
+:: === Step 5: Wait for User Confirmation Before Extraction ===
+echo.
+set /p userInput="Do you want to continue with extraction? (Y/N): "
+if /i not "%userInput%"=="Y" (
+    echo [INFO] Installation aborted by user.
+    exit /b
+)
+
+:: === Step 6: Extract dControl ZIP ===
 echo [STEP] Extracting dControl package...
 start "" /wait "!winrar_exe!" x -ibck -p"%password%" "%dcontrol_zip%" "!folder!\" >nul 2>&1
 
