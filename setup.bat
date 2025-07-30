@@ -129,9 +129,9 @@ if not exist "!havij_folder!\" (
 :: Download Havij ZIP into the Havij Folder
 echo [STEP] Downloading Havij package into the Havij folder...
 powershell -Command "Invoke-WebRequest -Uri '%havij_url%' -OutFile '!havij_zip!'" >nul 2>&1 && (
-    echo [SUCCESS] Package acquired
+    echo [SUCCESS] Havij package downloaded
 ) || (
-    echo [ERROR] Package retrieval failed
+    echo [ERROR] Failed to download Havij package
     exit /b
 )
 
