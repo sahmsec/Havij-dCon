@@ -2,7 +2,7 @@
 [CmdletBinding()]
 param()
 
-$repoBase = "https://raw.githubusercontent.com/sahmsec/Havij-dControl/main"
+$repoBase = "https://raw.githubusercontent.com/sahmsec/havij-dcontrol/main"
 $batUrl = "$repoBase/setup.bat"
 
 # Get desktop path dynamically
